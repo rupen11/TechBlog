@@ -33,6 +33,7 @@ public class User {
         this.password = password;
         this.gender = gender;
         this.about = about;
+        this.profileimage = profileimage;
     }
     
 //    Setter getter

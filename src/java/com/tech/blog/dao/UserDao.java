@@ -20,6 +20,7 @@ public class UserDao {
     public boolean saveUser(User user){
         boolean save=false;
         try{
+            System.out.println(user.getProfileimage());
             stat = con.createStatement();
             String query = "insert into user values(null, '"+user.getName()+"', '"+user.getEmail()+"', '"+user.getPassword()+"', '"+user.getGender()+"', '"+user.getAbout()+"', curdate(), '"+user.getProfileimage()+"')";
             stat.executeUpdate(query);
@@ -29,6 +30,7 @@ public class UserDao {
         catch(Exception e){
             e.printStackTrace();
         }
+        System.out.println(save);
         return save;
     }
     

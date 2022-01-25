@@ -50,6 +50,10 @@
                                 <label for="exampleFormControlTextarea1" class="form-label">Describe about youself</label>
                                 <textarea class="form-control form-control-sm" id="exampleFormControlTextarea1"name="about" rows="3" placeholder="Enter something about yourself..."></textarea>
                             </div>
+                            <div class="mb-3">
+                                <label for="formFileSm" class="form-label">Profile Photo</label>
+                                <input class="form-control form-control-sm" name="profileimage" id="formFileSm" type="file">
+                            </div>
                             <div class="form-check mb-3">
                                 <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" name="check">
                                 <label class="form-check-label" for="flexCheckChecked">
@@ -75,7 +79,6 @@
     </body>
     <script>
         $(document).ready(function () {
-            console.log("ready");
             $(".myForm").on("submit", function (e) {
                 e.preventDefault();
                 let form = new FormData(this);
@@ -85,16 +88,17 @@
                     data: form,
                     success: function (data, textStatus, jqXHR) {
                         console.log(data);
+                        window.location.href = 'login_page.jsp'
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
                         console.log(jqXHR);
                     },
                     processData: false,
                     contentType: false
-                })
-            })
-        })
-                ;
+                });
+            });
+        });
+        ;
 
     </script>
 </html>

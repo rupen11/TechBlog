@@ -10,6 +10,7 @@ import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
 
 @MultipartConfig
 public class Registerservlet extends HttpServlet {
@@ -30,7 +31,9 @@ public class Registerservlet extends HttpServlet {
                 String password = request.getParameter("user_password");
                 String gender = request.getParameter("gender");
                 String about = request.getParameter("about");
-                String profileimage = request.getParameter("profileimage");
+                Part part = request.getPart("profileimage");
+                String profileimage = part.getSubmittedFileName();
+                System.out.println(profileimage);
                 
                 //Creating user object and set all data to that object...
                 User user = new User(name, email, password, gender, about, profileimage);
@@ -38,11 +41,10 @@ public class Registerservlet extends HttpServlet {
                 //Creat a user dao object...
                 UserDao dao = new UserDao(ConnectionProvider.getConnection());
                 if(dao.saveUser(user)){
-                    out.println("done");
-                    response.sendRedirect("login_page.jsp");
+                    System.out.println("done");
                 }
                 else{
-                    out.println("error");
+                    System.out.println("error");
                 }
             }
         }

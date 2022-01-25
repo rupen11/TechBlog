@@ -49,7 +49,6 @@ public class Editservlet extends HttpServlet {
                 //get path
                 String path = request.getRealPath("/") + "pics"+ File.separator + user.getProfileimage();
                 
-                
                 String oldImagePath = request.getRealPath("/") + "pics" + File.separator + oldImage;
                 
                 Helper.deleteFile(oldImagePath);
@@ -64,7 +63,6 @@ public class Editservlet extends HttpServlet {
                     Message updateMsg = new Message("Some error to update profile photo", "error", "alert-danger");
                     session.setAttribute("msg", updateMsg);
                 }
-       
             }
             else{
                 System.out.println("Some error");
