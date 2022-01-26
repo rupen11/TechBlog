@@ -18,7 +18,8 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-        <title>JSP Page</title>
+        <link href="css/mystyle.css" rel="stylesheet" type="text/css"/>
+        <title>Profile</title>
     </head>
     <body>
         <!--Navbar-->
@@ -34,7 +35,7 @@
                             <a class="nav-link active" aria-current="page" href="index.jsp">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">About</a>
+                            <a class="nav-link" href="profile.jsp">Pofile</a>
                         </li>
                     </ul>
                     <ul class="navbar-nav mr-right">
@@ -68,6 +69,52 @@
             }
         %>
 
+        <!--Main body-->
+
+        <div class="container">
+            <div class="row mt-4">
+                <!--first column-->
+                <div class="col-md-4">
+                    <div class="list-group">
+                        <a href="#" class="cat-link list-group-item list-group-item-action bg-dark text-white" onClick="getPosts(0, this)" aria-current="true">
+                            All Post
+                        </a>
+
+                        <!--get category list-->
+                        <%
+                            PostDao postd = new PostDao(ConnectionProvider.getConnection());
+                            ArrayList<Category> categoryList = postd.getAllCategories();
+                            for (Category cat : categoryList) {
+                        %>
+                        <a href="#" class="cat-link list-group-item list-group-item-action" onClick="getPosts(<%= cat.getCid()%>, this)"><%= cat.getName()%></a>
+                        <%}%>
+
+                    </div>
+                </div>
+                <!--end first column-->
+                <!--second column-->
+                <div class="col-md-8">
+                    <div class="text-center" id="loader">
+                        <i class="fa fa-circle-o-notch fa-4x fa-spin"></i>
+                        <h4 class="mt-3">Loading...</h4>
+                    </div>
+                    <div class="container-fluid" id="post__container">
+                        <div class="row" id="posts"></div>
+                    </div>
+                </div>
+                <!--end second column-->
+            </div>
+        </div>
+
+
+        <!--                        Order date
+                                Order name
+                                Address pincode
+                                contact number
+                                workbook-2(second edition)
+                                ss
+        -->
+        <!--End main body-->
 
         <!--Model Post-->
         <div class="modal fade" id="modelPost" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -78,7 +125,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form id="postForm">
+                        <form action="AddPostServlet" id="postForm" method="post" enctype="multipart/form-data">
                             <select class="form-control mt-3" name="catId">
                                 <option selected disabled>Select Category</option>
                                 <%
@@ -96,7 +143,7 @@
                             <textarea rows="5" name="code" class="form-control mt-3" placeholder="Enter Some Code..."></textarea>
                             <input type="file" name="file" class="form-control mt-3"/>
                             <div class="text-center mt-3">
-                                <button type="submit" class="btn btn-dark btn-sm">Post</button>
+                                <button type="submit" class="btn btn-dark">Post</button>
                             </div>
                         </form>
                     </div>
@@ -212,30 +259,30 @@
 
         <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
-
+        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
 
 
 
 
         <script>
-            $(document).ready(() => {
-                let toggleProfile = false;
-                $("#showEditProfile").click(() => {
-                    console.log("ok");
-                    if (toggleProfile == false) {
-                        $("#showEditProfile").text("Back");
-                        $("#profilDetails").hide();
-                        $("#profileEdit").show();
-                        toggleProfile = true;
-                    } else {
-                        $("#showEditProfile").text("EDIT");
-                        $("#profileEdit").hide();
-                        $("#profilDetails").show();
-                        toggleProfile = false;
-                    }
-                });
-            });
+                            $(document).ready(() => {
+                                let toggleProfile = false;
+                                $("#showEditProfile").click(() => {
+                                    console.log("ok");
+                                    if (toggleProfile == false) {
+                                        $("#showEditProfile").text("Back");
+                                        $("#profilDetails").hide();
+                                        $("#profileEdit").show();
+                                        toggleProfile = true;
+                                    } else {
+                                        $("#showEditProfile").text("EDIT");
+                                        $("#profileEdit").hide();
+                                        $("#profilDetails").show();
+                                        toggleProfile = false;
+                                    }
+                                });
+                            });
         </script>
 
         <!--Post-->
@@ -249,7 +296,21 @@
                         type: "POST",
                         data: form,
                         success: function (data, textStatus, jqXHR) {
-                            console.log(data);
+                            if (data.trim() === "Done") {
+                                swal({
+                                    title: "Post Created",
+                                    text: "Creating Post Finish",
+                                    icon: "success",
+                                    button: "Ok",
+                                });
+                            } else {
+                                swal({
+                                    title: "Post Not Created",
+                                    text: "Please Try Again Later",
+                                    icon: "warning",
+                                    button: "Ok",
+                                });
+                            }
                         },
                         error: function (jqXHR, textStatus, errorThrown) {
                             console.log(jqXHR);
@@ -258,6 +319,35 @@
                         contentType: false
                     });
                 });
+            });
+        </script>
+
+        <!--loading post using ajax-->
+        <script>
+            function getPosts(cartId, cur) {
+
+                $(".cat-link").removeClass("bg-dark text-white");
+                $(cur).addClass("bg-dark text-white");
+
+
+
+
+                $("#post__container").hide();
+                $("#loader").show();
+                $.ajax({
+                    url: "load_posts.jsp",
+                    data: {cid: cartId},
+                    success: function (data, textStatus, jqXHR) {
+                        $("#loader").hide();
+                        $("#post__container").show();
+                        $("#posts").html(data);
+                    }
+                });
+            }
+
+            $(document).ready(function (e) {
+                let firstLink = $('.cat-link')[0];
+                getPosts(0, firstLink);
             });
         </script>
     </body>

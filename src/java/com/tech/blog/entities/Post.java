@@ -26,6 +26,16 @@ public class Post {
     public Post() {
     }
 
+    public Post(int pid, String pTitle, String pContent, String pCode, String pPic, Timestamp pDate, int userId) {
+        this.pid = pid;
+        this.pTitle = pTitle;
+        this.pContent = pContent;
+        this.pCode = pCode;
+        this.pPic = pPic;
+        this.pDate = pDate;
+        this.userId = userId;
+    }
+
     public Post(String pTitle, String pContent, String pCode, String pPic, Timestamp pDate, int catId, int userId) {
         this.pTitle = pTitle;
         this.pContent = pContent;
@@ -35,6 +45,8 @@ public class Post {
         this.catId = catId;
         this.userId = userId;
     }
+    
+    
 
     public int getPid() {
         return pid;

@@ -1,16 +1,27 @@
+<%@page import="com.tech.blog.dao.UserDao"%>
+<%@page import="java.text.DateFormat"%>
+<%@page import="com.tech.blog.entities.Post"%>
+<%@page import="java.util.List"%>
 <%@page import="com.tech.blog.entities.Category"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="com.tech.blog.helper.ConnectionProvider"%>
 <%@page import="com.tech.blog.dao.PostDao"%>
 <%@page import="com.tech.blog.entities.Message"%>
 <%@page import="com.tech.blog.entities.User"%>
-<%@page errorPage="error.jsp" %>
+<%--<%@page errorPage="error.jsp" %>--%>
 <%
     User user = (User) session.getAttribute("currentUser");
     if (user == null) {
         response.sendRedirect("login_page.jsp");
     }
 %>
+<%
+    int pid = Integer.parseInt(request.getParameter("post_id"));
+    PostDao pst = new PostDao(ConnectionProvider.getConnection());
+    Post p = pst.getPostByPostId(pid);
+    System.out.println(p);
+%>
+
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -19,7 +30,7 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <link href="css/mystyle.css" rel="stylesheet" type="text/css"/>
-        <title>Profile</title>
+        <title>Blog</title>
     </head>
     <body>
         <!--Navbar-->
@@ -72,49 +83,31 @@
         <!--Main body-->
 
         <div class="container">
-            <div class="row mt-4">
-                <!--first column-->
-                <div class="col-md-4">
-                    <div class="list-group">
-                        <a href="#" class="cat-link list-group-item list-group-item-action bg-dark text-white" onClick="getPosts(0, this)" aria-current="true">
-                            All Post
-                        </a>
+            <div class="row my-4">
+                <div class="col-md-8 offset-md-2">
+                    <div class="card">
+                        <div class="card-header primary-background text-white">
+                            <h4 class="post-title"><%= p.getpTitle()%></h4>
+                        </div>
+                        <div class="card-body">
 
-                        <!--get category list-->
-                        <%
-                            PostDao postd = new PostDao(ConnectionProvider.getConnection());
-                            ArrayList<Category> categoryList = postd.getAllCategories();
-                            for (Category cat : categoryList) {
-                        %>
-                        <a href="#" class="cat-link list-group-item list-group-item-action" onClick="getPosts(<%= cat.getCid()%>, this)"><%= cat.getName()%></a>
-                        <%}%>
+                            <img class="card-img-top mb-2" src="blog_pic/<%= p.getpPic()%>" alt="Card image cap">
+                            <p class="post-content"><%= p.getpContent()%></p>
 
+                            <br>
+                            <br>
+
+                            <div class="post-code">
+                                <pre><%= p.getpCode()%></pre>
+                            </div>
+
+                        </div>
                     </div>
                 </div>
-                <!--end first column-->
-                <!--second column-->
-                <div class="col-md-8">
-                    <div class="text-center" id="loader">
-                        <i class="fa fa-circle-o-notch fa-4x fa-spin"></i>
-                        <h4 class="mt-3">Loading...</h4>
-                    </div>
-                    <div class="container-fluid" id="post__container">
-                        <div class="row" id="posts"></div>
-                    </div>
-                </div>
-                <!--end second column-->
             </div>
         </div>
 
 
-        <!--                        Order date
-                                Order name
-                                Address pincode
-                                contact number
-                                workbook-2(second edition)
-                                ss
-        -->
-        <!--End main body-->
 
         <!--Model Post-->
         <div class="modal fade" id="modelPost" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -266,23 +259,23 @@
 
 
         <script>
-                            $(document).ready(() => {
-                                let toggleProfile = false;
-                                $("#showEditProfile").click(() => {
-                                    console.log("ok");
-                                    if (toggleProfile == false) {
-                                        $("#showEditProfile").text("Back");
-                                        $("#profilDetails").hide();
-                                        $("#profileEdit").show();
-                                        toggleProfile = true;
-                                    } else {
-                                        $("#showEditProfile").text("EDIT");
-                                        $("#profileEdit").hide();
-                                        $("#profilDetails").show();
-                                        toggleProfile = false;
-                                    }
-                                });
-                            });
+            $(document).ready(() => {
+                let toggleProfile = false;
+                $("#showEditProfile").click(() => {
+                    console.log("ok");
+                    if (toggleProfile == false) {
+                        $("#showEditProfile").text("Back");
+                        $("#profilDetails").hide();
+                        $("#profileEdit").show();
+                        toggleProfile = true;
+                    } else {
+                        $("#showEditProfile").text("EDIT");
+                        $("#profileEdit").hide();
+                        $("#profilDetails").show();
+                        toggleProfile = false;
+                    }
+                });
+            });
         </script>
 
         <!--Post-->
@@ -319,35 +312,6 @@
                         contentType: false
                     });
                 });
-            });
-        </script>
-
-        <!--loading post using ajax-->
-        <script>
-            function getPosts(cartId, cur) {
-
-                $(".cat-link").removeClass("bg-dark text-white");
-                $(cur).addClass("bg-dark text-white");
-
-
-
-
-                $("#post__container").hide();
-                $("#loader").show();
-                $.ajax({
-                    url: "load_posts.jsp",
-                    data: {cid: cartId},
-                    success: function (data, textStatus, jqXHR) {
-                        $("#loader").hide();
-                        $("#post__container").show();
-                        $("#posts").html(data);
-                    }
-                });
-            }
-
-            $(document).ready(function (e) {
-                let firstLink = $('.cat-link')[0];
-                getPosts(0, firstLink);
             });
         </script>
     </body>
