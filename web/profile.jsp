@@ -1,3 +1,7 @@
+<%@page import="com.tech.blog.entities.Category"%>
+<%@page import="java.util.ArrayList"%>
+<%@page import="com.tech.blog.helper.ConnectionProvider"%>
+<%@page import="com.tech.blog.dao.PostDao"%>
 <%@page import="com.tech.blog.entities.Message"%>
 <%@page import="com.tech.blog.entities.User"%>
 <%@page errorPage="error.jsp" %>
@@ -35,7 +39,10 @@
                     </ul>
                     <ul class="navbar-nav mr-right">
                         <li class="nav-item mx-3">
-                            <a class="nav-link" href="" data-bs-toggle="modal" data-bs-target="#exampleModal"> <span class="fa fa-user-circle "></span> <%= user.getName()%> </a>
+                            <a class="nav-link" href="" data-bs-toggle="modal" data-bs-target="#exampleModal"> <span class="fa fa-user-circle "></span> <%= user.getName()%></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="" data-bs-toggle="modal" data-bs-target="#modelPost"> <span class="fa fa-diamond"></span> Post</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="Logoutservlet"> <span class="fa fa-user-plus "></span> Logout</a>
@@ -44,6 +51,9 @@
                 </div>
             </div>
         </nav>
+        <!--end navbar-->
+
+
         <%
             Message m = (Message) session.getAttribute("msg");
             if (m != null) {
@@ -57,9 +67,47 @@
                 session.removeAttribute("msg");
             }
         %>
+
+
+        <!--Model Post-->
+        <div class="modal fade" id="modelPost" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">What's in your mind?</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="postForm">
+                            <select class="form-control mt-3" name="catId">
+                                <option selected disabled>Select Category</option>
+                                <%
+                                    PostDao pd = new PostDao(ConnectionProvider.getConnection());
+                                    ArrayList<Category> list = pd.getAllCategories();
+                                    for (Category c : list) {
+                                %>
+                                <option value="<%= c.getCid()%>"><%= c.getName()%></option>
+                                <%
+                                    }
+                                %>
+                            </select>
+                            <input type="text" name="title" class="form-control mt-3" placeholder="Title"/>
+                            <textarea rows="5" name="description" class="form-control mt-3" placeholder="Enter Some Description..."></textarea>
+                            <textarea rows="5" name="code" class="form-control mt-3" placeholder="Enter Some Code..."></textarea>
+                            <input type="file" name="file" class="form-control mt-3"/>
+                            <div class="text-center mt-3">
+                                <button type="submit" class="btn btn-dark btn-sm">Post</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!--Model-->
-
-
         <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -156,6 +204,7 @@
                 </div>
             </div>
         </div>
+        <!--end model-->
 
 
 
@@ -185,6 +234,29 @@
                         $("#profilDetails").show();
                         toggleProfile = false;
                     }
+                });
+            });
+        </script>
+
+        <!--Post-->
+        <script>
+            $(document).ready(function (e) {
+                $("#postForm").on("submit", function (event) {
+                    event.preventDefault();
+                    let form = new FormData(this);
+                    $.ajax({
+                        url: "AddPostServlet",
+                        type: "POST",
+                        data: form,
+                        success: function (data, textStatus, jqXHR) {
+                            console.log(data);
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            console.log(jqXHR);
+                        },
+                        processData: false,
+                        contentType: false
+                    });
                 });
             });
         </script>
