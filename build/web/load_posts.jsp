@@ -1,7 +1,15 @@
+<%@page import="com.tech.blog.entities.User"%>
+<%@page import="com.tech.blog.dao.LikeDao"%>
 <%@page import="com.tech.blog.entities.Post"%>
 <%@page import="java.util.List"%>
 <%@page import="com.tech.blog.helper.ConnectionProvider"%>
 <%@page import="com.tech.blog.dao.PostDao"%>
+<%
+    User user = (User) session.getAttribute("currentUser");
+    if (user == null) {
+        response.sendRedirect("login_page.jsp");
+    }
+%>
 <%
     PostDao pd = new PostDao(ConnectionProvider.getConnection());
 
@@ -29,7 +37,10 @@
             <p><%= p.getpContent()%></p>
         </div>
         <div class="card-footer bg-light text-white text-center">
-            <a class="mx-1 btn btn-outline-dark btn-sm"><i class="fa fa-thumbs-o-up"></i> 20</a>
+            <%
+                LikeDao ldao = new LikeDao(ConnectionProvider.getConnection());
+            %>
+            <a class="mx-1 btn btn-outline-dark btn-sm" onClick="doLike(<%= p.getPid()%>, <%= user.getId()%>)"><i class="fa fa-thumbs-o-up"></i><span class="like-counter"> <%= ldao.countLikeOnPost(p.getPid())%></span></a>
             <a href="blog_page.jsp?post_id=<%= p.getPid()%>" class="mx-1 btn btn-outline-dark btn-sm">Read More</a>
             <a class="mx-1 btn btn-outline-dark btn-sm"><i class="fa fa-comment-o"></i> 20</a>
         </div>

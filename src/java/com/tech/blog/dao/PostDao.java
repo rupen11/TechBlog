@@ -121,7 +121,8 @@ public class PostDao {
         return list;
     }
     
-    //Get post with post id    
+
+//Get post with post id    
     public Post getPostByPostId(int postId){
         Post post = null;
         try {

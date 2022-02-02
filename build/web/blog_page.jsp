@@ -1,3 +1,4 @@
+<%@page import="com.tech.blog.dao.LikeDao"%>
 <%@page import="com.tech.blog.dao.UserDao"%>
 <%@page import="java.text.DateFormat"%>
 <%@page import="com.tech.blog.entities.Post"%>
@@ -8,7 +9,7 @@
 <%@page import="com.tech.blog.dao.PostDao"%>
 <%@page import="com.tech.blog.entities.Message"%>
 <%@page import="com.tech.blog.entities.User"%>
-<%--<%@page errorPage="error.jsp" %>--%>
+<%@page errorPage="error.jsp" %>
 <%
     User user = (User) session.getAttribute("currentUser");
     if (user == null) {
@@ -30,7 +31,9 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <link href="css/mystyle.css" rel="stylesheet" type="text/css"/>
+        <link href="css/blogpost.css" rel="stylesheet" type="text/css"/>
         <title>Blog</title>
+        <script src="./js/myjs.js"></script>
     </head>
     <body>
         <!--Navbar-->
@@ -84,22 +87,45 @@
 
         <div class="container">
             <div class="row my-4">
-                <div class="col-md-8 offset-md-2">
+                <div class="col-md-6 offset-md-3">
                     <div class="card">
-                        <div class="card-header primary-background text-white">
-                            <h4 class="post-title"><%= p.getpTitle()%></h4>
+                        <div class="card-header bg-dark text-white">
+                            <h4 class="post-title" ><%= p.getpTitle()%></h4>
                         </div>
+
                         <div class="card-body">
+                            <img class="card-img-top mb-2 post-image" src="blog_pic/<%= p.getpPic()%>" alt="Card image cap">
 
-                            <img class="card-img-top mb-2" src="blog_pic/<%= p.getpPic()%>" alt="Card image cap">
-                            <p class="post-content"><%= p.getpContent()%></p>
+                            <div class="row post-user-info">
 
+                                <%
+                                    UserDao ud = new UserDao(ConnectionProvider.getConnection());
+                                    User u = ud.getUserByUserId(p.getUserId());
+                                %>
+
+                                <div class="col-md-8">
+                                    <p class="post-user"><%= u.getName()%> Has Posted</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <p class="post-time"><%= p.getpDate().toLocaleString()%></p>
+                                </div>
+                            </div>
+
+                            <p class="post-content mt-3"><%= p.getpContent()%></p>
                             <br>
-                            <br>
-
                             <div class="post-code">
                                 <pre><%= p.getpCode()%></pre>
                             </div>
+                        </div>
+
+                        <div class="card-footer bg-dark">
+
+                            <%
+                                LikeDao ldao = new LikeDao(ConnectionProvider.getConnection());
+                            %>
+
+                            <a href="#!" onClick="doLike(<%= p.getPid()%>, <%= user.getId()%>)" class="btn btn-outline-light btn-sm"> <i class="fa fa-thumbs-o-up"></i> <span class="like-counter"><%= ldao.countLikeOnPost(p.getPid())%></span>  </a>
+                            <a href="#!" class="btn btn-outline-light btn-sm"> <i class="fa fa-commenting-o"></i> <span>20</span>  </a>
 
                         </div>
                     </div>
@@ -259,23 +285,23 @@
 
 
         <script>
-            $(document).ready(() => {
-                let toggleProfile = false;
-                $("#showEditProfile").click(() => {
-                    console.log("ok");
-                    if (toggleProfile == false) {
-                        $("#showEditProfile").text("Back");
-                        $("#profilDetails").hide();
-                        $("#profileEdit").show();
-                        toggleProfile = true;
-                    } else {
-                        $("#showEditProfile").text("EDIT");
-                        $("#profileEdit").hide();
-                        $("#profilDetails").show();
-                        toggleProfile = false;
-                    }
-                });
-            });
+                                $(document).ready(() => {
+                                    let toggleProfile = false;
+                                    $("#showEditProfile").click(() => {
+                                        console.log("ok");
+                                        if (toggleProfile == false) {
+                                            $("#showEditProfile").text("Back");
+                                            $("#profilDetails").hide();
+                                            $("#profileEdit").show();
+                                            toggleProfile = true;
+                                        } else {
+                                            $("#showEditProfile").text("EDIT");
+                                            $("#profileEdit").hide();
+                                            $("#profilDetails").show();
+                                            toggleProfile = false;
+                                        }
+                                    });
+                                });
         </script>
 
         <!--Post-->

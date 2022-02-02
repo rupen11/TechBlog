@@ -1,0 +1,35 @@
+.post-user{
+    color: rgb(184,184,184); 
+    font-size: 15px;
+}
+
+.post-time{
+    color: rgb(184,184,184); 
+    font-size: 15px; 
+    font-style: italic;
+}
+
+.post-user-info{
+    border: 1px solid rgb(184,184,184); 
+    padding: 10px;
+    margin-top: 20px;
+}
+
+.post-user-info p{
+    margin: 0;
+}
+
+.post-title{
+    font-weight: 100
+}
+
+.post-image{
+    height: 270px;
+}
+
+.post-content{
+    font-size: 20px;
+    color: rgb(95,95,95);
+    font-weight: 300; 
+    margin: 0;
+}
